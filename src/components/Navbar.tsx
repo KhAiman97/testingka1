@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -48,7 +47,20 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
-              <img src="/lovable-uploads/7d120ee6-3614-4b75-9c35-716d54490d67.png" alt="WRLDS Technologies Logo" className={cn("h-8 w-auto", isScrolled ? "" : "brightness-0 invert")} />
+              {/* Use light logo when scrolled, dark logo when not scrolled */}
+              {isScrolled ? (
+                <img 
+                  src="/lovable-uploads/YottaSync-Logo-Light.png" 
+                  alt="YottaSync Logo" 
+                  className="h-8 w-auto" 
+                />
+              ) : (
+                <img 
+                  src="/lovable-uploads/YottaSync-Logo-Dark.png" 
+                  alt="YottaSync Logo" 
+                  className="h-8 w-auto" 
+                />
+              )}
             </Link>
           </div>
           
@@ -79,82 +91,86 @@ const Navbar = () => {
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-4 w-[400px]">
                       <li>
-                        <Link to="/projects/firecat" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">FireCat 6th SENSE</div>
-                          <p className="text-sm text-gray-500">Smart textiles for firefighter safety</p>
+                        <Link to="/projects/microscopy" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
+                          <div className="font-medium">Medical Microscopy AI</div>
+                          <p className="text-sm text-gray-500">Empowering Diagnostic Image Intelligence</p>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/projects/sport-retail" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Sports Performance</div>
-                          <p className="text-sm text-gray-500">Advanced tracking for athletes</p>
+                        <Link to="/projects/management-system" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
+                          <div className="font-medium">Lab Management System</div>
+                          <p className="text-sm text-gray-500">Streamlining Scientific Workflow Operations</p>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/projects/workwear" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Workwear Climate Control</div>
-                          <p className="text-sm text-gray-500">Temperature regulation for extreme environments</p>
+                        <Link to="/projects/plantation" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
+                          <div className="font-medium">Precision Yield Intelligence</div>
+                          <p className="text-sm text-gray-500">Optimizing Agricultural Output Analytics</p>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/projects/hockey" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Ice Hockey Elite Tracker</div>
-                          <p className="text-sm text-gray-500">Performance tracking for ice hockey</p>
+                        <Link to="/projects/cleaning-robot" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
+                          <div className="font-medium">Multi-Level CleanBot</div>
+                          <p className="text-sm text-gray-500">Autonomous Multi-Zone Sanitation</p>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/projects/pet-tracker" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Pet Activity Counter</div>
-                          <p className="text-sm text-gray-500">Smart collars for pet activity monitoring</p>
+                        <Link to="/projects/security-robot" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
+                          <div className="font-medium">Intelligent Autonomous Patrol</div>
+                          <p className="text-sm text-gray-500">Smart Surveillance and Response System</p>
                         </Link>
                       </li>
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
+
                 
+                {/* Products & Technology Dropdown */}
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className={cn(isScrolled ? "text-gray-700 hover:text-gray-900" : "text-gray-100 hover:text-white bg-transparent hover:bg-gray-800")}>
-                    Learn More
+                    Products & Technology
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-4 w-[400px]">
                       <li>
                         <Link to="/tech-details" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Technology Details</div>
-                          <p className="text-sm text-gray-500">How our smart textile platform works</p>
+                          <div className="font-medium">Technology Overview</div>
+                          <p className="text-sm text-gray-500">How our solution helps and what can we offer</p>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/development-process" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
-                          <div className="font-medium">Development Process</div>
-                          <p className="text-sm text-gray-500">Our approach to creating custom solutions</p>
+                        <Link to="/products/ys-hrms" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
+                          <div className="font-medium">YS HRMS</div>
+                          <p className="text-sm text-gray-500">Human Resource Management System</p>
                         </Link>
                       </li>
                       <li>
-                        
+                        <Link to="/products/ys-vision" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
+                          <div className="font-medium">YS Vision</div>
+                          <p className="text-sm text-gray-500">Computer Vision and AI Analytics</p>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/products/ys-trakpoint" className="block p-3 space-y-1 rounded-md hover:bg-gray-100">
+                          <div className="font-medium">YS Trakpoint</div>
+                          <p className="text-sm text-gray-500">Asset Tracking and Management</p>
+                        </Link>
                       </li>
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 
+                {/* Learn More - Direct link to Development Process */}
                 <NavigationMenuItem>
-                  <Link to="/blog">
+                  <Link to="/development-process">
                     <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), isScrolled ? "text-gray-700 hover:text-gray-900" : "text-gray-100 hover:text-white bg-transparent hover:bg-gray-800")}>
-                      News
+                      Learn More
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
                 
                 <NavigationMenuItem>
-                  <Link to="/careers">
-                    <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), isScrolled ? "text-gray-700 hover:text-gray-900" : "text-gray-100 hover:text-white bg-transparent hover:bg-gray-800")}>
-                      Careers
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-                
-                <NavigationMenuItem>
-                  <button onClick={() => scrollToSection('contact')} className={cn("px-4 py-2 rounded-md transition-colors", isScrolled ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-gray-700 text-white hover:bg-gray-600")}>
+                  <button onClick={() => scrollToSection('contact')} className={cn("px-4 py-2 rounded-md transition-colors", isScrolled ? "bg-red-700 text-white hover:bg-gray-300" : "bg-red-700 text-white hover:bg-gray-600")}>
                     Contact Us
                   </button>
                 </NavigationMenuItem>
@@ -171,9 +187,9 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Navigation Menu - Reduced height and simplified */}
-      <div className={cn("md:hidden transition-all duration-300 overflow-hidden w-full", isMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0")}>
-        <div className={cn("px-3 pt-2 pb-3 space-y-1 shadow-sm overflow-y-auto max-h-80", isScrolled ? "bg-white" : "bg-black")}>
+      {/* Mobile Navigation Menu - Updated with new structure */}
+      <div className={cn("md:hidden transition-all duration-300 overflow-hidden w-full", isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0")}>
+        <div className={cn("px-3 pt-2 pb-3 space-y-1 shadow-sm overflow-y-auto max-h-96", isScrolled ? "bg-white" : "bg-black")}>
           <Link to="/" className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 hover:bg-gray-50" : "text-gray-200 hover:bg-gray-900")} onClick={() => {
             setIsMenuOpen(false);
             window.scrollTo(0, 0);
@@ -188,7 +204,7 @@ const Navbar = () => {
             About Us
           </Link>
           
-          {/* Simplified Customer Cases - no dropdown */}
+          {/* Customer Cases - simplified */}
           <Link to="/projects/firecat" className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 hover:bg-gray-50" : "text-gray-200 hover:bg-gray-900")} onClick={() => {
             setIsMenuOpen(false);
             window.scrollTo(0, 0);
@@ -196,26 +212,42 @@ const Navbar = () => {
             Customer Cases
           </Link>
           
-          {/* Simplified Learn More - no dropdown */}
+          {/* Products & Technology - simplified */}
           <Link to="/tech-details" className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 hover:bg-gray-50" : "text-gray-200 hover:bg-gray-900")} onClick={() => {
             setIsMenuOpen(false);
             window.scrollTo(0, 0);
           }}>
+            Products & Technology
+          </Link>
+          
+          {/* Individual Product Links for Mobile */}
+          <Link to="/products/ys-hrms" className={cn("block px-6 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-600 hover:bg-gray-50" : "text-gray-300 hover:bg-gray-900")} onClick={() => {
+            setIsMenuOpen(false);
+            window.scrollTo(0, 0);
+          }}>
+            → YS HRMS
+          </Link>
+          
+          <Link to="/products/ys-vision" className={cn("block px-6 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-600 hover:bg-gray-50" : "text-gray-300 hover:bg-gray-900")} onClick={() => {
+            setIsMenuOpen(false);
+            window.scrollTo(0, 0);
+          }}>
+            → YS Vision
+          </Link>
+          
+          <Link to="/products/ys-trakpoint" className={cn("block px-6 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-600 hover:bg-gray-50" : "text-gray-300 hover:bg-gray-900")} onClick={() => {
+            setIsMenuOpen(false);
+            window.scrollTo(0, 0);
+          }}>
+            → YS Trakpoint
+          </Link>
+          
+          {/* Learn More - direct link */}
+          <Link to="/development-process" className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 hover:bg-gray-50" : "text-gray-200 hover:bg-gray-900")} onClick={() => {
+            setIsMenuOpen(false);
+            window.scrollTo(0, 0);
+          }}>
             Learn More
-          </Link>
-          
-          <Link to="/blog" className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 hover:bg-gray-50" : "text-gray-200 hover:bg-gray-900")} onClick={() => {
-            setIsMenuOpen(false);
-            window.scrollTo(0, 0);
-          }}>
-            News
-          </Link>
-          
-          <Link to="/careers" className={cn("block px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 hover:bg-gray-50" : "text-gray-200 hover:bg-gray-900")} onClick={() => {
-            setIsMenuOpen(false);
-            window.scrollTo(0, 0);
-          }}>
-            Careers
           </Link>
           
           <button onClick={() => scrollToSection('contact')} className={cn("block w-full text-left px-3 py-1.5 rounded-md text-sm", isScrolled ? "text-gray-700 bg-gray-200 hover:bg-gray-300" : "text-white bg-gray-700 hover:bg-gray-600")}>

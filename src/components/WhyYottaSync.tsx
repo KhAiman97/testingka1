@@ -51,7 +51,7 @@ const AnimatedCounter = ({
     </span>;
 };
 
-const WhyWrlds = () => {
+const WhyYottaSync = () => {
   const isMobile = useIsMobile();
   const containerVariants = {
     hidden: {
@@ -79,14 +79,14 @@ const WhyWrlds = () => {
       }
     }
   };
-  return <section id="why-wrlds" className="relative py-16 md:py-24 bg-white overflow-hidden">
+  return <section id="why-yottasync" className="relative py-16 md:py-24 bg-white overflow-hidden">
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div className="text-center mb-12 md:mb-16" initial="hidden" whileInView="visible" viewport={{
         once: true,
         margin: "-100px"
       }} variants={containerVariants}>
           <motion.h2 variants={itemVariants} className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
-            Why WRLDS?
+            Why YottaSync?
           </motion.h2>
           <motion.p variants={itemVariants} className="text-gray-600 text-lg max-w-3xl mx-auto">
             In an industry where complexity leads to failure, we bring simplicity and expertise to ensure your success
@@ -104,7 +104,8 @@ const WhyWrlds = () => {
             <h3 className="text-gray-900 text-2xl lg:text-3xl font-bold mb-3">
               <AnimatedCounter end={3.8} decimals={1} suffix=" Billion" /> USD
             </h3>
-            <p className="text-gray-700">Market estimated to reach this value by 2030, with massive growth potential for smart textile solutions</p>
+            <p className="text-gray-700">Market value by 2030.  
+              Companies that launch first will establish the dominant customer relationships.</p>
           </motion.div>
           
           <motion.div variants={itemVariants} className="bg-gray-100 p-6 rounded-xl border border-gray-200 text-center hover:bg-gray-200 transition-all">
@@ -112,10 +113,10 @@ const WhyWrlds = () => {
               <AlertTriangle className="w-8 h-8 text-gray-700" />
             </div>
             <h3 className="text-gray-900 text-2xl lg:text-3xl font-bold mb-3">
-              <AnimatedCounter end={60} suffix="%" /> 
+              <AnimatedCounter end={60} suffix="% Manual Work" /> 
             </h3>
             <p className="text-gray-700">
-              of IoT projects stall at the proof-of-concept stage due to fragmented expertise and poor coordination
+              Our AI automates repetitive tasks and data processing, freeing your team to focus on innovation instead of repetition.
             </p>
           </motion.div>
           
@@ -124,10 +125,10 @@ const WhyWrlds = () => {
               <Clock4 className="w-8 h-8 text-gray-700" />
             </div>
             <h3 className="text-gray-900 text-2xl lg:text-3xl font-bold mb-3">
-              <AnimatedCounter end={80} suffix="%" />
+              <AnimatedCounter end={80} suffix="%  Launch Time" />
             </h3>
             <p className="text-gray-700">
-              Increase in time-to-market for IoT products over the past four years, creating costly delays
+              Streamline prototyping, testing, and integration with automated workflows that accelerate development cycles dramatically.
             </p>
           </motion.div>
         </motion.div>
@@ -138,7 +139,7 @@ const WhyWrlds = () => {
         }} variants={containerVariants}>
           <motion.div variants={itemVariants} className="text-center mb-8">
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-              What WRLDS Does for You
+              What YottaSync Does for You
             </h3>
             <p className="text-gray-600 max-w-2xl mx-auto">
               We transform your ideas into market-ready solutions with tangible benefits for your business
@@ -210,4 +211,4 @@ const WhyWrlds = () => {
     </section>;
 };
 
-export default WhyWrlds;
+export default WhyYottaSync;

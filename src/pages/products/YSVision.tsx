@@ -1,18 +1,17 @@
-
 import ProjectPageLayout from '@/components/ProjectPageLayout';
 import SEO from '@/components/SEO';
 import { Footprints, Zap, LineChart, Award, Sparkles, FlaskConical } from 'lucide-react';
 
-const SportRetailProject = () => {
+const YSVision = () => {
   return (
     <ProjectPageLayout
-      title="Performance Athletic Footwear"
-      subtitle="Revolutionary R&D for next-generation athletic footwear"
+      title="Medical Microscopy AI"
+      subtitle="Revolutionary R&D for next-generation medical application"
       imageUrl="/lovable-uploads/b0622048-17b4-4c75-a3f0-6c9e17de1d09.png"
       brandName="Global Sports Retail Leader"
     >
       <SEO 
-        title="WRLDS - Performance Athletic Footwear Project" 
+        title="YottaSync" 
         description="Revolutionary R&D for next-generation athletic footwear with embedded textile sensors for real-time performance analytics and personalized footwear."
         type="article"
       />
@@ -111,4 +110,4 @@ const SportRetailProject = () => {
   );
 };
 
-export default SportRetailProject;
+export default YSVision;

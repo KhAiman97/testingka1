@@ -1,50 +1,435 @@
 import { useEffect, useRef, useState } from 'react';
-import { Activity, Shield, HardHat, Zap, ArrowRight, Box, Truck, Code, CheckCircle, Rocket, Factory, Microchip, Handshake, RefreshCcw, MessageSquare } from "lucide-react";
+import { Activity, Shield, HardHat, Zap, ArrowRight, Box, Truck, Code, CheckCircle, Rocket, Factory, Microchip, Handshake, RefreshCcw, MessageSquare, Cpu, Package, Link as LinkIcon } from "lucide-react";
 import { cn } from '@/lib/utils';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Link } from 'react-router-dom';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Progress } from "@/components/ui/progress";
-import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useScrollHijack } from '@/hooks/useScrollHijack';
+import { Typewriter } from "@/components/ui/typewriter-text";
+
+// Timeline interfaces and data
+interface TimelineItem {
+  id: number;
+  title: string;
+  date: string;
+  content: string;
+  category: string;
+  icon: React.ElementType;
+  relatedIds: number[];
+  status: "completed" | "in-progress" | "pending";
+  energy: number;
+}
+
+const timelineData: TimelineItem[] = [
+  {
+    id: 1,
+    title: "Solution Design",
+    date: "Phase 1",
+    content: "Our proprietary technology provides the core foundation of every solution we build. Custom hardware and software designed specifically for unique requirements.",
+    category: "Foundation",
+    icon: Cpu,
+    relatedIds: [2, 3],
+    status: "completed",
+    energy: 100,
+  },
+  {
+    id: 2,
+    title: "Consultancy",
+    date: "Phase 2",
+    content: "We carefully select the best off-the-shelf components to complement our proprietary technology, ensuring rapid development and lower risk.",
+    category: "Integration",
+    icon: Package,
+    relatedIds: [1, 3, 4],
+    status: "completed",
+    energy: 95,
+  },
+  {
+    id: 3,
+    title: "Research & Development",
+    date: "Phase 3",
+    content: "Our network of production partners ensures quality manufacturing at scale, bringing designs to life with precision and efficiency.",
+    category: "Manufacturing",
+    icon: Factory,
+    relatedIds: [1, 2, 4],
+    status: "completed",
+    energy: 90,
+  },
+  {
+    id: 4,
+    title: "Technical Support",
+    date: "Sprint 1",
+    content: "Working directly with customers to understand their needs and gather requirements. This phase sets the foundation for tailored solutions.",
+    category: "Adaptation",
+    icon: CheckCircle,
+    relatedIds: [2, 3, 5],
+    status: "in-progress",
+    energy: 75,
+  },
+  {
+    id: 5,
+    title: "Product Training",
+    date: "Sprint 2",
+    content: "Rapid prototyping based on customer feedback. We build working models to test concepts and validate approaches quickly.",
+    category: "Adaptation",
+    icon: Code,
+    relatedIds: [4, 6],
+    status: "in-progress",
+    energy: 65,
+  }
+];
+
+// Simple UI components for orbital timeline
+function Badge({ className, children }: { className?: string; children: React.ReactNode }) {
+  return (
+    <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function TimelineCard({ className, children }: { className?: string; children: React.ReactNode }) {
+  return (
+    <div className={`rounded-lg border shadow-sm ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function CardHeader({ className, children }: { className?: string; children: React.ReactNode }) {
+  return <div className={`flex flex-col space-y-1.5 p-6 ${className}`}>{children}</div>;
+}
+
+function CardTitle({ className, children }: { className?: string; children: React.ReactNode }) {
+  return <h3 className={`text-2xl font-semibold leading-none tracking-tight ${className}`}>{children}</h3>;
+}
+
+function TimelineCardContent({ className, children }: { className?: string; children: React.ReactNode }) {
+  return <div className={`p-6 pt-0 ${className}`}>{children}</div>;
+}
+
+// Orbital Timeline Component
+function OrbitalTimeline() {
+  const [expandedItems, setExpandedItems] = useState<Record<number, boolean>>({});
+  const [rotationAngle, setRotationAngle] = useState<number>(0);
+  const [autoRotate, setAutoRotate] = useState<boolean>(true);
+  const [pulseEffect, setPulseEffect] = useState<Record<number, boolean>>({});
+  const [centerOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [activeNodeId, setActiveNodeId] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const orbitRef = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === containerRef.current || e.target === orbitRef.current) {
+      setExpandedItems({});
+      setActiveNodeId(null);
+      setPulseEffect({});
+      setAutoRotate(true);
+    }
+  };
+
+  const toggleItem = (id: number) => {
+    setExpandedItems((prev) => {
+      const newState = { ...prev };
+      Object.keys(newState).forEach((key) => {
+        if (parseInt(key) !== id) {
+          newState[parseInt(key)] = false;
+        }
+      });
+
+      newState[id] = !prev[id];
+
+      if (!prev[id]) {
+        setActiveNodeId(id);
+        setAutoRotate(false);
+
+        const relatedItems = getRelatedItems(id);
+        const newPulseEffect: Record<number, boolean> = {};
+        relatedItems.forEach((relId) => {
+          newPulseEffect[relId] = true;
+        });
+        setPulseEffect(newPulseEffect);
+      } else {
+        setActiveNodeId(null);
+        setAutoRotate(true);
+        setPulseEffect({});
+      }
+
+      return newState;
+    });
+  };
+
+  useEffect(() => {
+    let rotationTimer: ReturnType<typeof setInterval>;
+
+    if (autoRotate) {
+      rotationTimer = setInterval(() => {
+        setRotationAngle((prev) => {
+          const newAngle = (prev + 0.3) % 360;
+          return Number(newAngle.toFixed(3));
+        });
+      }, 50);
+    }
+
+    return () => {
+      if (rotationTimer) {
+        clearInterval(rotationTimer);
+      }
+    };
+  }, [autoRotate]);
+
+  const calculateNodePosition = (index: number, total: number) => {
+    const angle = ((index / total) * 360 + rotationAngle) % 360;
+    const radius = 220;
+    const radian = (angle * Math.PI) / 180;
+
+    const x = radius * Math.cos(radian) + centerOffset.x;
+    const y = radius * Math.sin(radian) + centerOffset.y;
+
+    const zIndex = Math.round(100 + 50 * Math.cos(radian));
+    const opacity = Math.max(0.5, Math.min(1, 0.5 + 0.5 * ((1 + Math.sin(radian)) / 2)));
+
+    return { x, y, angle, zIndex, opacity };
+  };
+
+  const getRelatedItems = (itemId: number): number[] => {
+    const currentItem = timelineData.find((item) => item.id === itemId);
+    return currentItem ? currentItem.relatedIds : [];
+  };
+
+  const isRelatedToActive = (itemId: number): boolean => {
+    if (!activeNodeId) return false;
+    const relatedItems = getRelatedItems(activeNodeId);
+    return relatedItems.includes(itemId);
+  };
+
+  const getStatusStyles = (status: TimelineItem["status"]): string => {
+    switch (status) {
+      case "completed":
+        return "text-white bg-gray-700 border-gray-600";
+      case "in-progress":
+        return "text-gray-900 bg-gray-100 border-gray-300";
+      case "pending":
+        return "text-white bg-gray-500 border-gray-400";
+      default:
+        return "text-white bg-gray-500 border-gray-400";
+    }
+  };
+
+  return (
+    <div
+      className="w-full flex flex-col items-center justify-center bg-gray-900 overflow-hidden relative"
+      style={{ minHeight: '700px' }}
+      ref={containerRef}
+      onClick={handleContainerClick}
+    >
+      <div className="relative w-full max-w-4xl h-full flex items-center justify-center" style={{ minHeight: '700px' }}>
+        <div
+          className="absolute w-full h-full flex items-center justify-center"
+          ref={orbitRef}
+          style={{
+            perspective: "1000px",
+            transform: `translate(${centerOffset.x}px, ${centerOffset.y}px)`,
+          }}
+        >
+          <div className="absolute w-20 h-20 rounded-full bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800 flex items-center justify-center z-10">
+            <div className="absolute w-24 h-24 rounded-full border border-gray-600 animate-ping opacity-30"></div>
+            <div
+              className="absolute w-28 h-28 rounded-full border border-gray-700 animate-ping opacity-20"
+              style={{ animationDelay: "0.5s" }}
+            ></div>
+            <div className="w-10 h-10 rounded-full bg-gray-200 backdrop-blur-md flex items-center justify-center">
+              <img src="/lovable-uploads/YS.png" alt="YS Logo" className="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <div className="absolute w-96 h-96 rounded-full border border-gray-700 opacity-30"></div>
+          <div className="absolute w-80 h-80 rounded-full border border-gray-700 opacity-20"></div>
+
+          {timelineData.map((item, index) => {
+            const position = calculateNodePosition(index, timelineData.length);
+            const isExpanded = expandedItems[item.id];
+            const isRelated = isRelatedToActive(item.id);
+            const isPulsing = pulseEffect[item.id];
+            const Icon = item.icon;
+
+            const nodeStyle = {
+              transform: `translate(${position.x}px, ${position.y}px)`,
+              zIndex: isExpanded ? 200 : position.zIndex,
+              opacity: isExpanded ? 1 : position.opacity,
+            };
+
+            return (
+              <div
+                key={item.id}
+                ref={(el) => (nodeRefs.current[item.id] = el)}
+                className="absolute transition-all duration-700 cursor-pointer"
+                style={nodeStyle}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleItem(item.id);
+                }}
+              >
+                <div
+                  className={`absolute rounded-full -inset-1 ${
+                    isPulsing ? "animate-pulse" : ""
+                  }`}
+                  style={{
+                    background: `radial-gradient(circle, rgba(156,163,175,0.3) 0%, rgba(156,163,175,0) 70%)`,
+                    width: `${item.energy * 0.5 + 40}px`,
+                    height: `${item.energy * 0.5 + 40}px`,
+                    left: `-${(item.energy * 0.5 + 40 - 40) / 2}px`,
+                    top: `-${(item.energy * 0.5 + 40 - 40) / 2}px`,
+                  }}
+                ></div>
+
+                <div
+                  className={`
+                  w-12 h-12 rounded-full flex items-center justify-center
+                  ${
+                    isExpanded
+                      ? "bg-gray-200 text-gray-900"
+                      : isRelated
+                      ? "bg-gray-400 text-gray-900"
+                      : "bg-gray-800 text-gray-200"
+                  }
+                  border-2 
+                  ${
+                    isExpanded
+                      ? "border-gray-300 shadow-lg shadow-gray-600"
+                      : isRelated
+                      ? "border-gray-300 animate-pulse"
+                      : "border-gray-600"
+                  }
+                  transition-all duration-300 transform
+                  ${isExpanded ? "scale-150" : ""}
+                `}
+                >
+                  <Icon size={18} />
+                </div>
+
+                <div
+                  className={`
+                  absolute top-14 left-1/2 -translate-x-1/2 whitespace-nowrap
+                  text-xs font-semibold tracking-wider
+                  transition-all duration-300
+                  ${isExpanded ? "text-gray-200 scale-125" : "text-gray-400"}
+                `}
+                >
+                  {item.title}
+                </div>
+
+                {isExpanded && (
+                  <TimelineCard className="absolute top-24 left-1/2 -translate-x-1/2 w-72 bg-gray-800 backdrop-blur-lg border-gray-700 shadow-xl overflow-visible">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-px h-3 bg-gray-600"></div>
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-center">
+                        <Badge className={`px-2 text-xs ${getStatusStyles(item.status)}`}>
+                          {item.status === "completed"
+                            ? "COMPLETE"
+                            : item.status === "in-progress"
+                            ? "IN PROGRESS"
+                            : "PENDING"}
+                        </Badge>
+                        <span className="text-xs font-mono text-gray-400">
+                          {item.date}
+                        </span>
+                      </div>
+                      <CardTitle className="text-sm mt-2 text-gray-100">
+                        {item.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <TimelineCardContent className="text-xs text-gray-300">
+                      <p>{item.content}</p>
+
+                      <div className="mt-4 pt-3 border-t border-gray-700">
+                        <div className="flex justify-between items-center text-xs mb-1">
+                          <span className="flex items-center text-gray-400">
+                            <Zap size={10} className="mr-1" />
+                            Progress
+                          </span>
+                          <span className="font-mono text-gray-300">{item.energy}%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-gray-500 to-gray-400"
+                            style={{ width: `${item.energy}%` }}
+                          ></div>
+                        </div>
+                      </div>
+
+                      {item.relatedIds.length > 0 && (
+                        <div className="mt-4 pt-3 border-t border-gray-700">
+                          <div className="flex items-center mb-2">
+                            <LinkIcon size={10} className="text-gray-400 mr-1" />
+                            <h4 className="text-xs uppercase tracking-wider font-medium text-gray-400">
+                              Connected Steps
+                            </h4>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {item.relatedIds.map((relatedId) => {
+                              const relatedItem = timelineData.find((i) => i.id === relatedId);
+                              return (
+                                <button
+                                  key={relatedId}
+                                  className="flex items-center h-6 px-2 py-0 text-xs border-gray-600 bg-transparent hover:bg-gray-700 text-gray-300 hover:text-gray-100 transition-all rounded-md border"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleItem(relatedId);
+                                  }}
+                                >
+                                  {relatedItem?.title}
+                                  <ArrowRight size={8} className="ml-1 text-gray-400" />
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </TimelineCardContent>
+                  </TimelineCard>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const Features = () => {
   const featuresRef = useRef<HTMLDivElement>(null);
   const hijackSectionRef = useRef<HTMLDivElement>(null);
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
-  const [progressValue, setProgressValue] = useState(0);
-  const [currentSprint, setCurrentSprint] = useState(1);
-  const totalSprints = 3;
   const isMobile = useIsMobile();
 
   const features = [
     {
       icon: <Activity className="w-10 h-10 text-white transition-transform duration-300 transform" />,
-      title: "Sports Performance",
-      description: "Specialized fabrics that analyze form, provide instant feedback, and help prevent injuries in athletic equipment.",
-      image: "/lovable-uploads/48e540e5-6a25-44e4-b3f7-80f3bfc2777a.png"
+      title: "Medical",
+      description: "Intelligent systems that enhance diagnostics, personalize treatment, and accelerate research.",
+      image: "/lovable-uploads/medical.jpg"
     },
     {
       icon: <Shield className="w-10 h-10 text-white transition-transform duration-300 transform" />,
-      title: "Military & Defense",
-      description: "Tactical gear with embedded sensors for soldier health monitoring, environmental awareness, and enhanced safety.",
-      image: "/lovable-uploads/48ecf6e2-5a98-4a9d-af6f-ae2265cd4098.png"
+      title: "Plantation",
+      description: "Data-driven agriculture for maximizing yield and ensuring sustainable resource use.",
+      image: "/lovable-uploads/sawit.png"
     },
     {
       icon: <HardHat className="w-10 h-10 text-white transition-transform duration-300 transform" />,
-      title: "Industrial Safety",
-      description: "Protective workwear that detects hazards, monitors fatigue, and prevents workplace injuries through early intervention.",
-      image: "/lovable-uploads/cf8966e3-de0d-445f-9fbd-ee6c48daa7ff.png"
+      title: "Industry",
+      description: "Automating inspection and optimizing complex processes for peak operational efficiency.",
+      image: "/lovable-uploads/industry.jpg"
     },
     {
       icon: <Zap className="w-10 h-10 text-white transition-transform duration-300 transform" />,
-      title: "Thermal Regulation",
-      description: "Adaptive heating and cooling textiles that respond to body temperature and environmental conditions.",
-      image: "/lovable-uploads/6739bd63-bf19-4abd-bb23-0b613bbf7ac8.png"
+      title: "Businesses",
+      description: "Unlocking insights and automating core functions to drive growth and strategic decision-making.",
+      image: "/lovable-uploads/business.jpg"
     }
   ];
 
@@ -83,84 +468,48 @@ const Features = () => {
     }
     return () => observer.disconnect();
   }, []);
-  
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    const animateProgress = () => {
-      setProgressValue(0);
-      interval = setInterval(() => {
-        setProgressValue(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              setCurrentSprint(prev => prev < totalSprints ? prev + 1 : 1);
-              animateProgress();
-            }, 500);
-            return 100;
-          }
-          return prev + 2;
-        });
-      }, 100);
-    };
-    animateProgress();
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, []);
 
   const sensorCaseStudies = [{
-    image: "/lovable-uploads/843446fe-638e-4efb-b885-ed3cd505325a.png",
-    title: "Firefighter Safety",
-    description: "Advanced protective gear with gas, temperature, positioning, and motion sensors for safer emergency response."
+    image: "/lovable-uploads/SAAS.png",
+    title: "YS HRMS ",
+    description: "To be filled later on (Mainly on HRMS software developed)"
   }, {
-    image: "/lovable-uploads/5463c9c5-0946-4280-a14b-17636ff69a98.png",
-    title: "Industrial Worker Protection",
-    description: "Safety workwear with vibration, pressure, and heating sensors to prevent injuries and monitor environmental hazards."
+    image: "/lovable-uploads/TRAKPOINT.jpg",
+    title: "YS TrakPoint",
+    description: "To be filled later on (Mainly on TrakPoint System)"
   }, {
-    image: "/lovable-uploads/c5f8ee24-9815-4ebe-b65d-6f3d449feb8b.png",
-    title: "Sports Performance",
-    description: "Smart athletic wear with temperature and pressure sensors that track hydration, foot strike patterns, and performance metrics."
-  }];
-  const stepFlowItems = [{
-    icon: <Microchip className="h-10 w-10 text-gray-700" />,
-    title: "WRLDS Proprietary Modules",
-    description: "Our core technology components developed in-house"
-  }, {
-    icon: <Factory className="h-10 w-10 text-gray-700" />,
-    title: "Vetted Off-the-Shelf Hardware",
-    description: "Carefully selected components that complement our technology"
-  }, {
-    icon: <Handshake className="h-10 w-10 text-gray-700" />,
-    title: "Vetted Production Partners",
-    description: "Expert manufacturing partners for quality and reliability"
-  }];
-  const sprintPhases = [{
-    name: "Planning",
-    icon: <CheckCircle className="h-4 w-4" />
-  }, {
-    name: "Development",
-    icon: <Code className="h-4 w-4" />
-  }, {
-    name: "Testing",
-    icon: <Box className="h-4 w-4" />
-  }, {
-    name: "Review",
-    icon: <RefreshCcw className="h-4 w-4" />
+    image: "/lovable-uploads/VISION.jpg",
+    title: "YS Vision",
+    description: "To be filled later on (Maybe embed a simple YOLO Vision model for people to test)"
   }];
 
-  return <>
+  return (
+    <>
       <section id="features" className="relative bg-white overflow-hidden py-10 md:py-[50px] w-full">
         <div className="w-full px-4 sm:px-6 lg:px-8" ref={featuresRef}> 
           <div className="text-center mb-10 max-w-3xl mx-auto feature-item">
             <div className="inline-block mb-2 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
-              Textile Sensor Applications
+              AI Solution Applications
             </div>
-            <p className="text-gray-600 mt-4">
-              Our textile sensor technology transforms ordinary fabrics into intelligent interfaces that collect data, monitor conditions, and enhance performance across diverse sectors.
-            </p>
+            <h2 className="text-3xl font-bold mb-4">How AI helps in Different Industry</h2>
+            
+            <div className="text-gray-600 mt-4 min-h-[60px] flex items-center justify-center">
+              <Typewriter
+                text={[
+                  "Your Business Problem, Solved with AI.",
+                  "From Challenge to Solution, Intelligently.",
+                  "The Right AI for Your Real-World Tasks.",
+                  "Beyond Hype, Into Results."
+                ]}
+                speed={40}
+                deleteSpeed={20}
+                delay={1000}
+                loop={true}
+                className="text-lg font-medium text-gray-800"
+              />
+            </div>
           </div>
-          
-          {/* Scroll-hijacked features section */}
+
           <div 
             ref={hijackSectionRef}
             className={cn(
@@ -278,12 +627,11 @@ const Features = () => {
           <div className="mt-16 mb-8 feature-item">
             <div className="text-center mb-8">
               <div className="inline-block mb-2 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
-                Textile Sensor Applications
+                Real-World Applications
               </div>
-              <h3 className="text-2xl font-bold">Real-World Use Cases</h3>
+              <h3 className="text-2xl font-bold">Our Available Product</h3>
               <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
-                Explore how our textile sensors are applied in different professional contexts, 
-                from emergency response to construction and athletics.
+                Explore how our solutions helps and what we can offer.
                 <span className="block text-sm mt-1 text-blue-500">Scroll horizontally to see more examples →</span>
               </p>
             </div>
@@ -291,7 +639,8 @@ const Features = () => {
             <div className="rounded-xl overflow-hidden bg-white p-4 feature-item">
               <Carousel className="w-full max-w-7xl mx-auto">
                 <CarouselContent className="flex">
-                  {sensorCaseStudies.map((study, index) => <CarouselItem key={index} className="md:basis-1/3 flex-shrink-0">
+                  {sensorCaseStudies.map((study, index) => (
+                    <CarouselItem key={index} className="md:basis-1/3 flex-shrink-0">
                       <Card className="border border-gray-100 shadow-md">
                         <CardContent className="p-0">
                           <div className="w-full h-full">
@@ -303,7 +652,8 @@ const Features = () => {
                           </div>
                         </CardContent>
                       </Card>
-                    </CarouselItem>)}
+                    </CarouselItem>
+                  ))}
                 </CarouselContent>
                 <div className="flex justify-center mt-6 gap-2">
                   <CarouselPrevious className="relative static left-auto translate-y-0 hover:bg-gray-100" />
@@ -311,13 +661,13 @@ const Features = () => {
                 </div>
               </Carousel>
               <div className="text-center mt-6 text-sm text-gray-600">
-                <p className="font-medium">These examples showcase just a few ways our textile sensors can enhance safety and performance</p>
+                <p className="font-medium">These products showcase just a few of our services, go to customer cases for more</p>
               </div>
             </div>
           </div>
         </div>
         <div className="text-center mt-12 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <Button onClick={scrollToContact} className="inline-flex items-center px-4 sm:px-6 py-3 bg-gray-700 hover:bg-gray-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all group w-full sm:w-auto">
+          <Button onClick={scrollToContact} className="inline-flex items-center px-4 sm:px-6 py-3 bg-red-700 hover:bg-gray-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all group w-full sm:w-auto">
             Need Custom Solutions?
             <MessageSquare className="ml-2 w-4 h-4 group-hover:animate-pulse" />
           </Button>
@@ -329,152 +679,31 @@ const Features = () => {
         </div>
       </section>
       
-      <section id="technology" className="bg-gray-50 py-10 md:py-16">
+      <section id="technology" className="bg-gray-900 py-16 md:py-20">
         <div className="w-full px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-block mb-2 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+          <div className="text-center mb-8">
+            <div className="inline-block mb-2 px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-sm font-medium">
               Our Approach
             </div>
-            <h2 className="text-3xl font-bold mb-4">How our technology works</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto">
-              WRLDS builds hardware and software with proprietary and off-the-shelf modules, 
+            <h2 className="text-3xl font-bold mb-4 text-white">How our technology works</h2>
+            <p className="text-gray-400 max-w-3xl mx-auto mb-6">
+              We builds hardware and software with proprietary and off-the-shelf modules, 
               allowing us to develop completely unique solutions at high speed and lower risk.
             </p>
+            <p className="text-sm text-gray-500 mb-2">Click any node to explore our process</p>
           </div>
-          
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 mb-10 transition-all duration-300 hover:shadow-xl">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-              {stepFlowItems.map((item, index) => <HoverCard key={index}>
-                  <HoverCardTrigger asChild>
-                    <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 h-full cursor-pointer">
-                      <div className="flex flex-col items-center text-center">
-                        <div className="bg-gray-50 rounded-full p-4 mb-4">
-                          {item.icon}
-                        </div>
-                        <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                        <p className="text-sm text-gray-600">{item.description}</p>
-                      </div>
-                    </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-80 shadow-lg">
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-semibold">{item.title}</h4>
-                      <p className="text-sm">{item.description}</p>
-                      {index === 0 && <p className="text-xs text-gray-500">Our proprietary technology provides the core foundation of every solution we build.</p>}
-                      {index === 1 && <p className="text-xs text-gray-500">We carefully select the best off-the-shelf components to complement our proprietary technology.</p>}
-                      {index === 2 && <p className="text-xs text-gray-500">Our network of production partners ensures quality manufacturing at scale.</p>}
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>)}
-            </div>
 
-            <div className="relative h-16 mb-10">
-              <div className="hidden md:block absolute left-1/2 -translate-x-1/2 w-1 h-full bg-gradient-to-b from-gray-300 to-gray-400"></div>
-              <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-full -mt-3">
-                <div className="bg-gray-400 rounded-full p-1">
-                  <ArrowRight className="w-5 h-5 text-white rotate-90" />
-                </div>
-              </div>
-              
-              <div className="md:hidden flex justify-center items-center h-full">
-                <div className="w-1/3 h-0.5 bg-gray-300"></div>
-                <div className="bg-gray-400 rounded-full p-1 mx-2">
-                  <ArrowRight className="w-5 h-5 text-white" />
-                </div>
-                <div className="w-1/3 h-0.5 bg-gray-300"></div>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-6 mb-10 shadow-md">
-              <div className="max-w-3xl mx-auto">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 gap-2">
-                  <div className="flex items-center">
-                    <h3 className="text-xl font-bold">Adaptation Project</h3>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-500 mr-2">Iterative Development</span>
-                    <RefreshCcw className="h-5 w-5 text-gray-600 animate-rotate-slow" />
-                  </div>
-                </div>
-                
-                <p className="text-gray-600 mb-4">Working iteratively with customers to tailor solutions to their needs</p>
-                
-                <div className="relative mb-2">
-                  <Progress value={progressValue} className="h-3 bg-gray-200" />
-                </div>
-                
-                <div className={cn("grid gap-1 mt-4", isMobile ? "grid-cols-2 gap-y-2" : "grid-cols-4")}>
-                  {sprintPhases.map((phase, index) => <div key={index} className={cn("text-center p-2 rounded transition-all", progressValue >= index / sprintPhases.length * 100 && progressValue < (index + 1) / sprintPhases.length * 100 ? "bg-blue-50 border border-blue-100" : "bg-gray-50")}>
-                      <div className="flex flex-col items-center">
-                        <div className={cn("rounded-full p-1 mb-1", progressValue >= index / sprintPhases.length * 100 ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500")}>
-                          {phase.icon}
-                        </div>
-                        <span className="text-xs font-medium">{phase.name}</span>
-                      </div>
-                    </div>)}
-                </div>
-                
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-6 gap-2">
-                  <div className="flex items-center">
-                    <div className="bg-green-100 rounded-full p-1 mr-2 shrink-0">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                    </div>
-                    <span className="text-sm text-gray-600">Customer feedback integrated at every stage</span>
-                  </div>
-                  <div className="text-sm text-gray-500 flex items-center mt-2 sm:mt-0">
-                    <span className="mr-2">Continuous improvement</span>
-                    <div className="flex space-x-1">
-                      <span className="inline-block w-2 h-2 bg-gray-300 rounded-full animate-pulse"></span>
-                      <span className="inline-block w-2 h-2 bg-gray-400 rounded-full animate-pulse animation-delay-200"></span>
-                      <span className="inline-block w-2 h-2 bg-gray-500 rounded-full animate-pulse animation-delay-400"></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="relative h-16 mb-10">
-              <div className="hidden md:block absolute left-1/2 -translate-x-1/2 w-1 h-full bg-gradient-to-b from-gray-300 to-gray-400"></div>
-              <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-full -mt-3">
-                <div className="bg-gray-400 rounded-full p-1">
-                  <ArrowRight className="w-5 h-5 text-white rotate-90" />
-                </div>
-              </div>
-              
-              <div className="md:hidden flex justify-center items-center h-full">
-                <div className="w-1/3 h-0.5 bg-gray-300"></div>
-                <div className="bg-gray-400 rounded-full p-1 mx-2">
-                  <ArrowRight className="w-5 h-5 text-white" />
-                </div>
-                <div className="w-1/3 h-0.5 bg-gray-300"></div>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-r from-gray-100 via-white to-gray-100 rounded-lg p-8 max-w-xl mx-auto text-center shadow-md hover:shadow-lg transition-all duration-300">
-              <div className="relative inline-block mb-4">
-                <div className="absolute inset-0 bg-black/10 rounded-full animate-pulse-slow"></div>
-                <div className="relative bg-white rounded-full p-4 border border-gray-200 shadow-md">
-                  <Rocket className="h-10 w-10 text-gray-700" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Hitting the Market</h3>
-              <p className="text-gray-700">Ready to scale, produce, and launch</p>
-              <div className="flex justify-center mt-4 space-x-2">
-                <span className="inline-block w-3 h-3 rounded-full bg-gray-300 animate-pulse"></span>
-                <span className="inline-block w-3 h-3 rounded-full bg-gray-500 animate-pulse animation-delay-200"></span>
-                <span className="inline-block w-3 h-3 rounded-full bg-gray-700 animate-pulse animation-delay-400"></span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="text-center">
+          <OrbitalTimeline />
+
+          <div className="text-center mt-8">
+            <p className="text-sm text-gray-500 mb-6">Explore the interactive timeline above to see how we bring solutions to life</p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <Link to="/tech-details" onClick={() => window.scrollTo(0, 0)} className="inline-flex items-center px-4 sm:px-6 bg-white text-gray-700 rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-md transition-all group py-3 w-full sm:w-auto justify-center">
+              <Link to="/tech-details" onClick={() => window.scrollTo(0, 0)} className="inline-flex items-center px-6 bg-gray-800 text-gray-200 rounded-lg border border-gray-700 hover:bg-gray-700 hover:shadow-md transition-all group py-3 w-full sm:w-auto justify-center">
                 Learn More About Our Technology
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               
-              <Button onClick={scrollToContact} className="inline-flex items-center px-4 sm:px-6 py-3 bg-gray-700 hover:bg-gray-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all group w-full sm:w-auto justify-center">
+              <Button onClick={scrollToContact} className="inline-flex items-center px-6 py-3 bg-red-700 hover:bg-gray-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all group w-full sm:w-auto justify-center">
                 Contact Our Experts
                 <MessageSquare className="ml-2 w-4 h-4 group-hover:scale-110 transition-transform" />
               </Button>
@@ -482,6 +711,8 @@ const Features = () => {
           </div>
         </div>
       </section>
-    </>;
+    </>
+  );
 };
+
 export default Features;

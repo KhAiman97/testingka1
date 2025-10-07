@@ -6,54 +6,56 @@ import { Link } from 'react-router-dom';
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const projects = [
+
   {
     id: 1,
-    title: "6th SENSE Safety System",
-    brand: "FireCat Group",
-    description: "AI-driven sensor solution integrated into uniforms for law enforcement, military and firefighters, providing real-time vital monitoring and situational awareness in high-risk environments.",
-    tags: ["Safety", "Military", "AI Sensors", "Real-time Monitoring"],
-    imageUrl: "/lovable-uploads/93ab0638-8190-4ccf-897f-21fda7f4f5ad.png",
+    title: "Medical Microscopy AI",
+    brand: "Sunway Medical Center",
+    description: "AI-powered microscopy solution that automates cell analysis, generates intelligent diagnostic reports, and provides AI-driven diagnostic hypotheses to support pathologists in complex cases.",
+    tags: ["Healthcare", "AI Diagnostics", "Machine Vision", "Pathology", "LLM"],
+    imageUrl: "/lovable-uploads/black.jpg",
     isFeatured: true,
-    link: "/projects/firecat",
-    details: `
-      FireCat Group aimed to enhance safety in high-risk environments. WRLDS Technologies provided the 6th SENSE solution with secure real-time data transmission, high-quality sensors resistant to extreme conditions, integrated AI-powered clothing, and a centralized control unit. Features include Man Down Alarm, GPS positioning, vital sign monitoring, and Panic Button. Benefits: life-saving technology, machine learning preventing false alarms, durable hardware with 7-10 year lifespan, washable sensors, and Plug & Play installation with 12-20 hours of operation per charge.
-    `
-  },
+    link: "/projects/microscopy",
+    },
   {
     id: 2,
-    title: "Performance Athletic Footwear",
-    brand: "Global Sports Retail Leader",
-    description: "Smart Footwear R&D aiming to revolutionize development, fitting, and testing of athletic footwear.",
-    tags: ["Sports", "R&D", "Footwear", "Athletic Performance"],
-    imageUrl: "/lovable-uploads/b0622048-17b4-4c75-a3f0-6c9e17de1d09.png",
-    link: "/projects/sport-retail"
+    title: "Lab Management System",
+    brand: "Sihat Lab",
+    description: "Cloud-based laboratory management system that automates workflows, centralizes operations, and intelligently distributes results to streamline research and diagnostic processes.",
+    tags: ["Biotech", "Lab Automation", "Workflow Management", "SaaS", "Compliance"],
+    imageUrl: "/lovable-uploads/black.jpg",
+    isFeatured: true,
+    link: "/projects/management-system",
   },
   {
     id: 3,
-    title: "Workwear Climate Control",
-    brand: "European Multinational Textile Producer",
-    description: "Fully integrated temperature controls for professionals working in extreme heat and cold. Modular approach to enable full-body systems.",
-    tags: ["Climate Control", "Workwear", "Temperature Regulation", "Extreme Conditions"],
-    imageUrl: "/lovable-uploads/6b0637e9-4a7b-40d0-b219-c8b7f879f93e.png",
-    link: "/projects/workwear"
+    title: "Multi-LevelCleanBot",
+    brand: "What Company?",
+    description: "A fleet of advanced cleaning robots capable of autonomous elevator navigation and dynamic fleet management to provide facility-wide cleaning across multi-story buildings without human intervention.",
+    tags: ["Robotics", "Facility Management", "Autonomous Systems", "AI", "IoT"],
+    imageUrl: "/lovable-uploads/black.jpg",
+    isFeatured: true,
+    link: "/projects/cleaning-robot",
   },
   {
     id: 4,
-    title: "Ice Hockey Elite Skill Tracker",
-    brand: "Mars Blades",
-    description: "R&D product evaluating data from single IMU embedded in the hockey shoe. Aim: establish motion patterns that lead to ultimate acceleration, speed, and maneuverability.",
-    tags: ["Ice Hockey", "Motion Analysis", "Performance Tracking", "Sports"],
-    imageUrl: "/lovable-uploads/c30e0487-2fa0-41d1-9a0b-699cb2855388.png",
-    link: "/projects/hockey"
+    title: "Precision Yield Intelligence",
+    brand: "Tapway",
+    description: "A state-of-the-art computer vision system that automates the real-time counting and classification of palm fruit bunches on processing lines to accurately measure yield and optimize production efficiency.",
+    tags: ["Agriculture", "Computer Vision", "AI", "Industrial Automation", "Analytics"],
+    imageUrl: "/lovable-uploads/black.jpg",
+    isFeatured: true,
+    link: "/projects/plantation",
   },
   {
     id: 5,
-    title: "Dog Activity Counter",
-    brand: "UK Insurance Giant",
-    description: "R&D project embedding a step counter in a dog collar. Measures daily activity and sends real-time data to the cloud for veterinary consultancies.",
-    tags: ["Pet Technology", "Insurance", "Activity Tracking", "R&D"],
-    imageUrl: "/lovable-uploads/d5ce901e-2ce0-4f2a-bce1-f0ca5d6192df.png",
-    link: "/projects/pet-tracker"
+    title: "Intelligent Autonomous Patrol",
+    brand: "Roboprenuer",
+    description: "A fleet of AI-driven security robots that perform continuous autonomous patrols, using advanced machine vision to detect security threats like unattended baggage and unauthorized access in real-time.",
+    tags: ["Security", "Autonomous Robotics", "Computer Vision", "Public Safety", "AI"],
+    imageUrl: "/lovable-uploads/black.jpg",
+    isFeatured: true,
+    link: "/projects/security-robot",
   }
 ];
 
@@ -133,10 +135,10 @@ const Projects = () => {
             Customer Cases
           </div>
           <h2 className="text-3xl font-bold mb-3">
-            From Textile to Intelligence
+            From Idea to Reality
           </h2>
           <p className="text-gray-600">
-            Explore how our textile sensor technology is revolutionizing multiple industries with intelligent fabric solutions tailored to specific needs.
+            Explore how our product & technology is revolutionizing multiple industries to its specific needs.
           </p>
           {isMobile && (
             <div className="flex items-center justify-center mt-4 animate-pulse-slow">

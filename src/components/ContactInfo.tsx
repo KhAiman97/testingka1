@@ -14,28 +14,28 @@ const ContactInfo = () => {
             Contact Us Today
           </h2>
           <p className="text-gray-700 text-lg max-w-2xl mx-auto">
-            Have questions about our AI-powered sensor solutions? Reach out to our team and let's discuss how we can help bring your ideas to life.
+            Have questions about our AI-powered solutions? Reach out to our team and let's discuss how we can help bring your ideas to life.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Felix's Contact Info */}
+          {/*Shasi's Contact Info */}
           <div className="bg-white rounded-xl shadow-xl p-6 md:p-8 border border-gray-700">
             <div className="flex flex-col items-center text-center">
               <img 
-                src="/lovable-uploads/aa5291bd-2417-4c1e-9a02-0bcc71a92507.png"
-                alt="Felix von Heland"
+                src="/lovable-uploads/profilephoto.jpg"
+                alt="Shasi Rao"
                 className="w-32 h-32 rounded-full mb-4 object-cover filter grayscale"
               />
-              <h3 className="text-xl font-bold text-gray-900">Felix von Heland</h3>
-              <p className="text-gray-600 mb-4">CEO and Founder</p>
+              <h3 className="text-xl font-bold text-gray-900">Shasi Rao</h3>
+              <p className="text-gray-600 mb-4">Chief Executive Officer</p>
               <div className="flex flex-col space-y-3">
-                <a href="mailto:felix@wrlds.com" className="flex items-center text-gray-700 hover:text-blue-600">
+                <a href="mailto:shasi@yottapath,net" className="flex items-center text-gray-700 hover:text-blue-600">
                   <Mail className="w-5 h-5 mr-2" />
-                  felix@wrlds.com
+                  shasi@yottapath.net
                 </a>
                 <a 
-                  href="https://www.linkedin.com/in/felixvonheland/" 
+                  href="https://www.linkedin.com/" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center text-gray-700 hover:text-blue-600"
@@ -47,23 +47,23 @@ const ContactInfo = () => {
             </div>
           </div>
 
-          {/* Love's Contact Info */}
+          {/* Kisheen's Contact Info */}
           <div className="bg-white rounded-xl shadow-xl p-6 md:p-8 border border-gray-700">
             <div className="flex flex-col items-center text-center">
               <img 
-                src="/lovable-uploads/a9bb9110-964a-43b0-a5ab-7162140cd133.png"
-                alt="Love Anderberg"
+                src="/lovable-uploads/profilephoto.jpg"
+                alt="Kisheen Rao"
                 className="w-32 h-32 rounded-full mb-4 object-cover filter grayscale"
               />
-              <h3 className="text-xl font-bold text-gray-900">Love Anderberg</h3>
-              <p className="text-gray-600 mb-4">COO</p>
+              <h3 className="text-xl font-bold text-gray-900">Kisheen Rao</h3>
+              <p className="text-gray-600 mb-4">Chief Technology Officer</p>
               <div className="flex flex-col space-y-3">
-                <a href="mailto:love@wrlds.com" className="flex items-center text-gray-700 hover:text-blue-600">
+                <a href="mailto:kisheen@yottapath.net" className="flex items-center text-gray-700 hover:text-blue-600">
                   <Mail className="w-5 h-5 mr-2" />
-                  love@wrlds.com
+                  kisheen@yottapath.net
                 </a>
                 <a 
-                  href="https://www.linkedin.com/in/love-anderberg-67549a174/" 
+                  href="https://www.linkedin.com" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center text-gray-700 hover:text-blue-600"
@@ -73,7 +73,7 @@ const ContactInfo = () => {
                 </a>
                 <a href="tel:+46760149508" className="flex items-center text-gray-700 hover:text-blue-600">
                   <Phone className="w-5 h-5 mr-2" />
-                  076-014 95 08
+                  014-923 6738  
                 </a>
               </div>
             </div>
